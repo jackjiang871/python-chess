@@ -1,3 +1,4 @@
+from copy import copy
 import math
 '''
 
@@ -14,11 +15,11 @@ black_pieces = ['♟', '♜', '♞', '♝', '♛', '♚', '♟e', '♚m', '♜m'
 white_pieces = ['♙', '♖', '♘', '♗', '♕', '♔', '♙e', '♔m', '♖m']
 
 def get_updated_board_if_is_valid_move(r1, c1, r2, c2, board, turn):
-    if turn == 0 and board[r1][c1] in black_pieces:
-        print("invalid: white's move")
+    if turn[0] == 0 and board[r1][c1] in black_pieces:
+        print("invalid move: white's move")
         return board
-    elif turn == 1 and board[r1][c1] in white_pieces:
-        print("invalid: black's move")
+    elif turn[0] == 1 and board[r1][c1] in white_pieces:
+        print("invalid move: black's move")
         return board
     next_board = get_updated_board_if_is_valid_move_without_king_check(r1, c1, r2, c2, board)
     if next_board:
@@ -39,6 +40,7 @@ def get_updated_board_if_is_valid_move(r1, c1, r2, c2, board, turn):
             print("will be put in check")
             return board
         else:
+            turn[0] = 0 if turn[0] else 1
             return next_board
     else:
         print("invalid move")
@@ -59,7 +61,7 @@ def get_updated_board_if_is_valid_move_without_king_check(r1, c1, r2, c2, board)
         return None
 
     # Copy board
-    next_board = [row[:] for row in board]
+    next_board = remove_en_passant([row[:] for row in board])
 
     if piece in ['♙','♟','♙e','♟e']:
         if piece == '♙' or piece == '♙e':
@@ -272,7 +274,18 @@ def get_updated_board_if_is_valid_move_without_king_check(r1, c1, r2, c2, board)
             next_board[r2][c2] = piece
             return next_board
 
-
+def remove_en_passant(board):
+    new_board = []
+    for i in range(8):
+        for j in range(8):
+            piece_to_insert = board[i][j]
+            if len(board[i][j]) == 2 and board[i][j][1] == 'e':
+                piece_to_insert = board[i][j][0]
+            if j == 0:
+                new_board.append([piece_to_insert])
+            else:
+                new_board[i].append(piece_to_insert)
+    return new_board
 
 def can_be_captured(r1, c1, board):
     for i in range(8):
@@ -300,21 +313,22 @@ def print_board(board):
     else:
         print("nope")
 
-board = [['♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜'],
-         ['♟' for _ in range(8)],
-         [' ' for _ in range(8)],
-         [' ' for _ in range(8)],
-         [' ' for _ in range(8)],
-         [' ' for _ in range(8)],
-         ['♙' for _ in range(8)],
-         ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖']]
-i = 0
-while True:
-    print_board(board)
-    print("r1","c1","r2","c2")
-    
-    user_input = str(input()).replace(" ", "")[:4]
-    if user_input == 'quit':
-        break
-    board = get_updated_board_if_is_valid_move(int(user_input[0]),int(user_input[1]),int(user_input[2]),int(user_input[3]), board, i)
-    i = 0 if i else 1
+def start_game():
+
+    board = [['♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜'],
+            ['♟' for _ in range(8)],
+            [' ' for _ in range(8)],
+            [' ' for _ in range(8)],
+            [' ' for _ in range(8)],
+            [' ' for _ in range(8)],
+            ['♙' for _ in range(8)],
+            ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖']]
+    turn = [0]
+    while True:
+        print_board(board)
+        print("r1","c1","r2","c2")
+        
+        user_input = str(input()).replace(" ", "")[:4]
+        if user_input == 'quit':
+            break
+        board = get_updated_board_if_is_valid_move(int(user_input[0]),int(user_input[1]),int(user_input[2]),int(user_input[3]), board, turn)
