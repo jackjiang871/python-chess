@@ -9,7 +9,8 @@ bp = Blueprint('chess_controller', __name__)
 @bp.route('/update-board', methods=(['POST']))
 def index():
     # require r1, c1, r2, c2, board, turn
-    req_params = json.loads(request.json)
+    print(request.json)
+    req_params = request.json
     required_params = ["r1", "c1", "r2", "c2", "board", "turn"]
     for param in required_params:
         if param not in req_params:
