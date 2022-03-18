@@ -1,5 +1,6 @@
 from copy import copy
 import math
+from unicodedata import name
 '''
 
 '''
@@ -14,11 +15,21 @@ board = [['♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜'],
 black_pieces = ['♟', '♜', '♞', '♝', '♛', '♚', '♟e', '♚m', '♜m']
 white_pieces = ['♙', '♖', '♘', '♗', '♕', '♔', '♙e', '♔m', '♖m']
 
+def get_new_board():
+    return board
+
+def get_black_pieces():
+    return black_pieces
+
+def get_white_pieces():
+    return white_pieces
+
+# turn - 0: white 1: black
 def get_updated_board_if_is_valid_move(r1, c1, r2, c2, board, turn):
-    if turn[0] == 0 and board[r1][c1] in black_pieces:
+    if turn == 0 and board[r1][c1] in black_pieces:
         print("invalid move: white's move")
         return board
-    elif turn[0] == 1 and board[r1][c1] in white_pieces:
+    elif turn == 1 and board[r1][c1] in white_pieces:
         print("invalid move: black's move")
         return board
     next_board = get_updated_board_if_is_valid_move_without_king_check(r1, c1, r2, c2, board)
@@ -40,7 +51,7 @@ def get_updated_board_if_is_valid_move(r1, c1, r2, c2, board, turn):
             print("will be put in check")
             return board
         else:
-            turn[0] = 0 if turn[0] else 1
+            turn = 0 if turn else 1
             return next_board
     else:
         print("invalid move")
@@ -313,6 +324,17 @@ def print_board(board):
     else:
         print("nope")
 
+def compare_board(b1, b2):
+    assert(len(b1) == 8)
+    assert(len(b2) == 8)
+    for i in range(len(b1)):
+        assert(len(b1[i]) == 8)
+        assert(len(b2[i]) == 8)
+        for j in range(len(b1[i])):
+            if b1[i][j] != b2[i][j]:
+                return False
+    return True
+
 def start_game():
 
     board = [['♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜'],
@@ -323,7 +345,7 @@ def start_game():
             [' ' for _ in range(8)],
             ['♙' for _ in range(8)],
             ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖']]
-    turn = [0]
+    turn = 0
     while True:
         print_board(board)
         print("r1","c1","r2","c2")
@@ -331,4 +353,10 @@ def start_game():
         user_input = str(input()).replace(" ", "")[:4]
         if user_input == 'quit':
             break
+        prevboard = board.copy()
         board = get_updated_board_if_is_valid_move(int(user_input[0]),int(user_input[1]),int(user_input[2]),int(user_input[3]), board, turn)
+        if not compare_board(board, prevboard):
+            turn = 0 if turn else 1
+
+if __name__ == "__main__":
+    start_game()
