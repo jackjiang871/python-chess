@@ -36,22 +36,22 @@ def get_updated_board_if_is_valid_move(r1, c1, r2, c2, board, turn):
     if next_board:
         r, c, isWhite = 0, 0, False
         # find white/black king, store coordinates in r c
-        if board[r1][c1] in white_pieces:
+        if next_board[r1][c1] in white_pieces:
             for i in range(8):
                 for j in range(8):
-                    piece = board[i][j]
+                    piece = next_board[i][j]
                     if piece in ['♔', '♔m']:
                         isWhite = True
                         r, c = i, j
-        elif board[r1][c1] in black_pieces:
+        elif next_board[r1][c1] in black_pieces:
             for i in range(8):
                 for j in range(8):
-                    piece = board[i][j]
+                    piece = next_board[i][j]
                     if piece in ['♚', '♚m']:
                         isWhite = False
                         r, c = i, j
         if can_be_captured(r, c, next_board, isWhite):
-            print("will be put in check")
+            print("will be put in check", r ,c)
             return board
         else:
             turn = 0 if turn else 1
@@ -309,6 +309,7 @@ def can_be_captured(r1, c1, board, isWhite = None):
                 if (isWhite and board[i][j] in white_pieces) or ((not isWhite) and board[i][j] in black_pieces):
                     continue
             if get_updated_board_if_is_valid_move_without_king_check(i,j,r1,c1, board):
+                print_board(board)
                 print("captured: ", i, j, r1, c1)
                 return True
     
@@ -353,7 +354,7 @@ def start_game():
             ['♙' for _ in range(8)],
             ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖']]
     turn = 0
-
+    board = [['♜', '♞', '♝', ' ', ' ', ' ', '♚m', ' '], ['♟', '♟', '♟', ' ', '♝', ' ', '♟', '♟'], [' ', ' ', ' ', '♟', ' ', ' ', ' ', '♞'], [' ', ' ', ' ', '♞', ' ', ' ', ' ', ' '], [' ', ' ', '♕', ' ', ' ', '♜m', ' ', ' '], [' ', ' ', ' ', '♙', ' ', ' ', ' ', ' '], ['♙', '♙', '♙', ' ', ' ', ' ', ' ', '♙'], ['♖', '♘', '♗', ' ', ' ', '♔m', ' ', ' ']]
     while True:
         print_board(board)
         print("r1","c1","r2","c2")
