@@ -61,6 +61,7 @@ def get_updated_board_if_is_valid_move(r1, c1, r2, c2, board, turn):
         return board
 # 73 74
 def get_updated_board_if_is_valid_move_without_king_check(r1, c1, r2, c2, board):
+    board = [row[:] for row in board]
     coordinates_are_outside_board = r1 < 0 or c1 < 0 or r2 < 0 or c2 < 0 or r1 > 7 or c1 > 7 or r2 > 7 or c2 > 7
     if coordinates_are_outside_board or (r1, c1) == (r2, c2):
         return None
@@ -352,6 +353,7 @@ def start_game():
             ['♙' for _ in range(8)],
             ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖']]
     turn = 0
+
     while True:
         print_board(board)
         print("r1","c1","r2","c2")
@@ -359,7 +361,7 @@ def start_game():
         user_input = str(input()).replace(" ", "")[:4]
         if user_input == 'quit':
             break
-        prevboard = board.copy()
+        prevboard = [row[:] for row in board]
         board = get_updated_board_if_is_valid_move(int(user_input[0]),int(user_input[1]),int(user_input[2]),int(user_input[3]), board, turn)
         if not compare_board(board, prevboard):
             turn = 0 if turn else 1
