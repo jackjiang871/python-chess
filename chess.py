@@ -34,20 +34,23 @@ def get_updated_board_if_is_valid_move(r1, c1, r2, c2, board, turn):
         return board
     next_board = get_updated_board_if_is_valid_move_without_king_check(r1, c1, r2, c2, board)
     if next_board:
-        r, c = 0, 0
+        r, c, isWhite = 0, 0, False
+        # find white/black king, store coordinates in r c
         if board[r1][c1] in white_pieces:
             for i in range(8):
                 for j in range(8):
                     piece = board[i][j]
                     if piece in ['♔', '♔m']:
+                        isWhite = True
                         r, c = i, j
         elif board[r1][c1] in black_pieces:
             for i in range(8):
                 for j in range(8):
                     piece = board[i][j]
                     if piece in ['♚', '♚m']:
+                        isWhite = False
                         r, c = i, j
-        if can_be_captured(r, c, next_board):
+        if can_be_captured(r, c, next_board, isWhite):
             print("will be put in check")
             return board
         else:
@@ -56,7 +59,7 @@ def get_updated_board_if_is_valid_move(r1, c1, r2, c2, board, turn):
     else:
         print("invalid move")
         return board
-
+# 73 74
 def get_updated_board_if_is_valid_move_without_king_check(r1, c1, r2, c2, board):
     coordinates_are_outside_board = r1 < 0 or c1 < 0 or r2 < 0 or c2 < 0 or r1 > 7 or c1 > 7 or r2 > 7 or c2 > 7
     if coordinates_are_outside_board or (r1, c1) == (r2, c2):
@@ -298,9 +301,12 @@ def remove_en_passant(board):
                 new_board[i].append(piece_to_insert)
     return new_board
 
-def can_be_captured(r1, c1, board):
+def can_be_captured(r1, c1, board, isWhite = None):
     for i in range(8):
         for j in range(8):
+            if isWhite != None:
+                if (isWhite and board[i][j] in white_pieces) or ((not isWhite) and board[i][j] in black_pieces):
+                    continue
             if get_updated_board_if_is_valid_move_without_king_check(i,j,r1,c1, board):
                 print("captured: ", i, j, r1, c1)
                 return True
