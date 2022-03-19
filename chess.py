@@ -36,14 +36,14 @@ def get_updated_board_if_is_valid_move(r1, c1, r2, c2, board, turn):
     if next_board:
         r, c, isWhite = 0, 0, False
         # find white/black king, store coordinates in r c
-        if next_board[r1][c1] in white_pieces:
+        if next_board[r2][c2] in white_pieces:
             for i in range(8):
                 for j in range(8):
                     piece = next_board[i][j]
                     if piece in ['♔', '♔m']:
                         isWhite = True
                         r, c = i, j
-        elif next_board[r1][c1] in black_pieces:
+        elif next_board[r2][c2] in black_pieces:
             for i in range(8):
                 for j in range(8):
                     piece = next_board[i][j]
@@ -354,7 +354,7 @@ def start_game():
             ['♙' for _ in range(8)],
             ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖']]
     turn = 0
-    board = [['♜', '♞', '♝', ' ', ' ', ' ', '♚m', ' '], ['♟', '♟', '♟', ' ', '♝', ' ', '♟', '♟'], [' ', ' ', ' ', '♟', ' ', ' ', ' ', '♞'], [' ', ' ', ' ', '♞', ' ', ' ', ' ', ' '], [' ', ' ', '♕', ' ', ' ', '♜m', ' ', ' '], [' ', ' ', ' ', '♙', ' ', ' ', ' ', ' '], ['♙', '♙', '♙', ' ', ' ', ' ', ' ', '♙'], ['♖', '♘', '♗', ' ', ' ', '♔m', ' ', ' ']]
+
     while True:
         print_board(board)
         print("r1","c1","r2","c2")
