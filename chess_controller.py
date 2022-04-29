@@ -40,5 +40,6 @@ def index():
     turn = int(req_params["turn"])
 
     next_board = chess.get_updated_board_if_is_valid_move(r1, c1, r2, c2, req_params["board"], turn)
+    possible_moves = chess.get_possible_moves(next_board, 0 if turn else 1)
 
-    return {"next_board": next_board}
+    return {"next_board": next_board, "possible_moves": possible_moves}

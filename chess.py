@@ -14,6 +14,12 @@ board = [['♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜'],
          ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖']]
 black_pieces = ['♟', '♜', '♞', '♝', '♛', '♚', '♟e', '♚m', '♜m']
 white_pieces = ['♙', '♖', '♘', '♗', '♕', '♔', '♙e', '♔m', '♖m']
+pawn = ['♟','♙','♟e','♙e']
+rook = ['♜','♖','♜m','♖m']
+knight = ['♞','♘']
+bishop = ['♝','♗']
+king = ['♚','♔','♚m','♔m']
+queen = ['♛','♔']
 
 def get_new_board():
     return board
@@ -23,6 +29,186 @@ def get_black_pieces():
 
 def get_white_pieces():
     return white_pieces
+
+# gets the list of possible moves [(r1,c1,r2,c2)]
+def get_possible_moves(board, turn):
+    # can optimize for each piece
+    # king, just check neighbor squares
+    # rook, check straight lines starting from rook position
+    # pawn, check 4 spots
+    # bishop, check diagonals starting from bishop position
+    # knight, check L moves
+    def get_possible_moves_for_piece_and_position(piece, r1, c1):
+        possible_moves = []
+        moves_to_check = []
+        if piece in pawn:
+            # see if these 4 moves are valid
+            #  *  -> r1 - 2
+            # *** -> r1 - 1
+            #  ♟  -> (r1,c1)
+            moves_to_check = [(r1-1, c1-1), (r1-1, c1), (r1-2, c1), (r1-1, c1+1)]              
+        if piece in king:
+            # see if these 10 moves are valid
+            #  *** -> r1 - 1
+            # **♚**-> r1
+            #  *** -> r1 + 1
+            moves_to_check = [(r1-1,c1-1),(r1-1,c1),(r1-1,c1+1),(r1,c1-1),(r1,c1),(r1,c1+1),(r1+1,c1-1),(r1+1,c1),(r1+1,c1+1),(r1,c1-2),(r1,c1+2)]
+        if piece in knight:
+            # see if these 8 moves are valid
+            #  * *  -> r1 - 2
+            # *   * -> r1 - 1
+            #   ♞   -> r1
+            # *   * -> r1 + 1
+            #  * *  -> r1 + 2
+            moves_to_check = [(r1-2, c1-1),(r1-2, c1+1),(r1+2, c1-1),(r1+2, c1+1),(r1-1,c1-2),(r1-1,c1+2),(r1+1,c1-2),(r1+1,c1+2)]
+        if piece in rook:
+            # check left, up, right, down moves originating from the rook, make sure nothing is blocking
+            # left
+            r2, c2 = r1, c1-1
+            coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+                moves_to_check.append((r2,c2))
+                c2 -= 1
+                coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            # right
+            r2, c2 = r1, c1+1
+            coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+                moves_to_check.append((r2,c2))
+                c2 += 1
+                coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            # up
+            r2, c2 = r1-1, c1
+            coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+                moves_to_check.append((r2,c2))
+                r2 -= 1
+                coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            # down
+            r2, c2 = r1+1, c1
+            coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+                moves_to_check.append((r2,c2))
+                r2 += 1
+                coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+        if piece in bishop:
+            # check up_left, up_right, down_left, down_right moves originating from the bishop, make sure nothing is blocking
+            # up_left
+            r2, c2 = r1-1, c1-1
+            coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+                moves_to_check.append((r2,c2))
+                r2 -= 1
+                c2 -= 1
+                coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            # up_right
+            r2, c2 = r1-1, c1+1
+            coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+                moves_to_check.append((r2,c2))
+                r2 -= 1
+                c2 += 1
+                coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            # down_left
+            r2, c2 = r1+1, c1-1
+            coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+                moves_to_check.append((r2,c2))
+                r2 += 1
+                c2 -= 1
+                coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            # down_right
+            r2, c2 = r1+1, c1+1
+            coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+                moves_to_check.append((r2,c2))
+                r2 += 1
+                c2 += 1
+                coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+        if piece in queen:
+            # check left, up, right, down moves originating from the queen, make sure nothing is blocking
+            # left
+            r2, c2 = r1, c1-1
+            coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+                moves_to_check.append((r2,c2))
+                c2 -= 1
+                coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            # right
+            r2, c2 = r1, c1+1
+            coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+                moves_to_check.append((r2,c2))
+                c2 += 1
+                coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            # up
+            r2, c2 = r1-1, c1
+            coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+                moves_to_check.append((r2,c2))
+                r2 -= 1
+                coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            # down
+            r2, c2 = r1+1, c1
+            coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+                moves_to_check.append((r2,c2))
+                r2 += 1
+                coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            # check up_left, up_right, down_left, down_right moves originating from the queen, make sure nothing is blocking
+            # up_left
+            r2, c2 = r1-1, c1-1
+            coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+                moves_to_check.append((r2,c2))
+                r2 -= 1
+                c2 -= 1
+                coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            # up_right
+            r2, c2 = r1-1, c1+1
+            coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+                moves_to_check.append((r2,c2))
+                r2 -= 1
+                c2 += 1
+                coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            # down_left
+            r2, c2 = r1+1, c1-1
+            coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+                moves_to_check.append((r2,c2))
+                r2 += 1
+                c2 -= 1
+                coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            # down_right
+            r2, c2 = r1+1, c1+1
+            coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+                moves_to_check.append((r2,c2))
+                r2 += 1
+                c2 += 1
+                coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
+            
+        for move in moves_to_check:
+            r2, c2 = move
+            if compare_board(get_updated_board_if_is_valid_move(r1, c1, r2, c2, board, turn), board):
+                possible_moves.append((r1,c1,r2,c2))
+
+    possible_moves = []
+    # get all piece positions belonging to player
+    # [[1,2]]
+    player_pieces = black_pieces
+    if turn == 0:
+        player_pieces = white_pieces
+    if turn == 1:
+        player_pieces = black_pieces
+    for i in range(len(board)):
+        for j in range(len(board[i])):
+            piece = board[i][j]
+            if piece in player_pieces: # white
+                possible_moves += get_possible_moves_for_piece_and_position(piece, i, j)
+
+    return possible_moves
 
 # turn - 0: white 1: black
 def get_updated_board_if_is_valid_move(r1, c1, r2, c2, board, turn):
@@ -324,7 +510,8 @@ def print_board(board):
     else:
         print("nope")
 
-def compare_board(b1, b2):
+# True if equal
+def compare_board(b1, b2): 
     assert(len(b1) == 8)
     assert(len(b2) == 8)
     for i in range(len(b1)):
