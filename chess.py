@@ -38,6 +38,14 @@ def get_possible_moves(board, turn):
     # pawn, check 4 spots
     # bishop, check diagonals starting from bishop position
     # knight, check L moves
+    player_pieces = black_pieces
+    enemy_pieces = white_pieces
+    if turn == 0:
+        player_pieces = white_pieces
+        enemy_pieces = black_pieces
+    if turn == 1:
+        player_pieces = black_pieces
+        enemy_pieces = white_pieces
     def get_possible_moves_for_piece_and_position(piece, r1, c1):
         print(piece, r1, c1)
         possible_moves = []
@@ -70,28 +78,28 @@ def get_possible_moves(board, turn):
             # left
             r2, c2 = r1, c1-1
             coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
-            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+            while not coordinates_are_outside_board and (board[r2][c2] == ' ' or board[r2][c2] in enemy_pieces):
                 moves_to_check.append((r2,c2))
                 c2 -= 1
                 coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
             # right
             r2, c2 = r1, c1+1
             coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
-            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+            while not coordinates_are_outside_board and (board[r2][c2] == ' ' or board[r2][c2] in enemy_pieces):
                 moves_to_check.append((r2,c2))
                 c2 += 1
                 coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
             # up
             r2, c2 = r1-1, c1
             coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
-            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+            while not coordinates_are_outside_board and (board[r2][c2] == ' ' or board[r2][c2] in enemy_pieces):
                 moves_to_check.append((r2,c2))
                 r2 -= 1
                 coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
             # down
             r2, c2 = r1+1, c1
             coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
-            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+            while not coordinates_are_outside_board and (board[r2][c2] == ' ' or board[r2][c2] in enemy_pieces):
                 moves_to_check.append((r2,c2))
                 r2 += 1
                 coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
@@ -100,7 +108,7 @@ def get_possible_moves(board, turn):
             # up_left
             r2, c2 = r1-1, c1-1
             coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
-            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+            while not coordinates_are_outside_board and (board[r2][c2] == ' ' or board[r2][c2] in enemy_pieces):
                 moves_to_check.append((r2,c2))
                 r2 -= 1
                 c2 -= 1
@@ -108,7 +116,7 @@ def get_possible_moves(board, turn):
             # up_right
             r2, c2 = r1-1, c1+1
             coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
-            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+            while not coordinates_are_outside_board and (board[r2][c2] == ' ' or board[r2][c2] in enemy_pieces):
                 moves_to_check.append((r2,c2))
                 r2 -= 1
                 c2 += 1
@@ -116,7 +124,7 @@ def get_possible_moves(board, turn):
             # down_left
             r2, c2 = r1+1, c1-1
             coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
-            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+            while not coordinates_are_outside_board and (board[r2][c2] == ' ' or board[r2][c2] in enemy_pieces):
                 moves_to_check.append((r2,c2))
                 r2 += 1
                 c2 -= 1
@@ -124,7 +132,7 @@ def get_possible_moves(board, turn):
             # down_right
             r2, c2 = r1+1, c1+1
             coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
-            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+            while not coordinates_are_outside_board and (board[r2][c2] == ' ' or board[r2][c2] in enemy_pieces):
                 moves_to_check.append((r2,c2))
                 r2 += 1
                 c2 += 1
@@ -134,28 +142,28 @@ def get_possible_moves(board, turn):
             # left
             r2, c2 = r1, c1-1
             coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
-            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+            while not coordinates_are_outside_board and (board[r2][c2] == ' ' or board[r2][c2] in enemy_pieces):
                 moves_to_check.append((r2,c2))
                 c2 -= 1
                 coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
             # right
             r2, c2 = r1, c1+1
             coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
-            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+            while not coordinates_are_outside_board and (board[r2][c2] == ' ' or board[r2][c2] in enemy_pieces):
                 moves_to_check.append((r2,c2))
                 c2 += 1
                 coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
             # up
             r2, c2 = r1-1, c1
             coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
-            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+            while not coordinates_are_outside_board and (board[r2][c2] == ' ' or board[r2][c2] in enemy_pieces):
                 moves_to_check.append((r2,c2))
                 r2 -= 1
                 coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
             # down
             r2, c2 = r1+1, c1
             coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
-            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+            while not coordinates_are_outside_board and (board[r2][c2] == ' ' or board[r2][c2] in enemy_pieces):
                 moves_to_check.append((r2,c2))
                 r2 += 1
                 coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
@@ -163,7 +171,7 @@ def get_possible_moves(board, turn):
             # up_left
             r2, c2 = r1-1, c1-1
             coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
-            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+            while not coordinates_are_outside_board and (board[r2][c2] == ' ' or board[r2][c2] in enemy_pieces):
                 moves_to_check.append((r2,c2))
                 r2 -= 1
                 c2 -= 1
@@ -171,7 +179,7 @@ def get_possible_moves(board, turn):
             # up_right
             r2, c2 = r1-1, c1+1
             coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
-            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+            while not coordinates_are_outside_board and (board[r2][c2] == ' ' or board[r2][c2] in enemy_pieces):
                 moves_to_check.append((r2,c2))
                 r2 -= 1
                 c2 += 1
@@ -179,7 +187,7 @@ def get_possible_moves(board, turn):
             # down_left
             r2, c2 = r1+1, c1-1
             coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
-            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+            while not coordinates_are_outside_board and (board[r2][c2] == ' ' or board[r2][c2] in enemy_pieces):
                 moves_to_check.append((r2,c2))
                 r2 += 1
                 c2 -= 1
@@ -187,7 +195,7 @@ def get_possible_moves(board, turn):
             # down_right
             r2, c2 = r1+1, c1+1
             coordinates_are_outside_board = r2 < 0 or c2 < 0 or r2 > 7 or c2 > 7
-            while not coordinates_are_outside_board and board[r2][c2] == ' ':
+            while not coordinates_are_outside_board and (board[r2][c2] == ' ' or board[r2][c2] in enemy_pieces):
                 moves_to_check.append((r2,c2))
                 r2 += 1
                 c2 += 1
@@ -203,11 +211,7 @@ def get_possible_moves(board, turn):
     possible_moves = []
     # get all piece positions belonging to player
     # [[1,2]]
-    player_pieces = black_pieces
-    if turn == 0:
-        player_pieces = white_pieces
-    if turn == 1:
-        player_pieces = black_pieces
+    
     for i in range(len(board)):
         for j in range(len(board[i])):
             piece = board[i][j]
