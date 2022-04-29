@@ -39,6 +39,7 @@ def get_possible_moves(board, turn):
     # bishop, check diagonals starting from bishop position
     # knight, check L moves
     def get_possible_moves_for_piece_and_position(piece, r1, c1):
+        print(piece, r1, c1)
         possible_moves = []
         moves_to_check = []
         if piece in pawn:
@@ -46,7 +47,10 @@ def get_possible_moves(board, turn):
             #  *  -> r1 - 2
             # *** -> r1 - 1
             #  ♟  -> (r1,c1)
-            moves_to_check = [(r1-1, c1-1), (r1-1, c1), (r1-2, c1), (r1-1, c1+1)]              
+            if piece in white_pieces:
+                moves_to_check = [(r1-1, c1-1), (r1-1, c1), (r1-2, c1), (r1-1, c1+1)]
+            else:
+                moves_to_check = [(r1+1, c1-1), (r1+1, c1), (r1+2, c1), (r1+1, c1+1)]
         if piece in king:
             # see if these 10 moves are valid
             #  *** -> r1 - 1
@@ -191,8 +195,10 @@ def get_possible_moves(board, turn):
             
         for move in moves_to_check:
             r2, c2 = move
-            if compare_board(get_updated_board_if_is_valid_move(r1, c1, r2, c2, board, turn), board):
+            if not compare_board(get_updated_board_if_is_valid_move(r1, c1, r2, c2, board, turn), board):
                 possible_moves.append((r1,c1,r2,c2))
+        print(possible_moves)
+        return possible_moves
 
     possible_moves = []
     # get all piece positions belonging to player
@@ -553,6 +559,7 @@ def start_game():
         board = get_updated_board_if_is_valid_move(int(user_input[0]),int(user_input[1]),int(user_input[2]),int(user_input[3]), board, turn)
         if not compare_board(board, prevboard):
             turn = 0 if turn else 1
+            print(get_possible_moves(board, turn))
 
 if __name__ == "__main__":
     start_game()
