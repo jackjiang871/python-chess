@@ -19,7 +19,7 @@ rook = ['♜','♖','♜m','♖m']
 knight = ['♞','♘']
 bishop = ['♝','♗']
 king = ['♚','♔','♚m','♔m']
-queen = ['♛','♔']
+queen = ['♛','♕']
 
 def get_new_board():
     return board
@@ -549,6 +549,7 @@ def start_game():
     turn = 0
 
     while True:
+        print(get_possible_moves(board, turn))
         print_board(board)
         print("r1","c1","r2","c2")
         
