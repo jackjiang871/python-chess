@@ -3,11 +3,45 @@ from flask import (
 )
 import chess
 import json
+import uuid
+import os
+import datetime
 
 bp = Blueprint('chess_controller', __name__)
 
+def retrieve_and_delete_old_users():
+    should_rewrite = False
+    data = { 'users' : {}, 'session_ids' : {} }
+
+    # get current users
+    if os.path.isfile('users.json'):
+        with open('users.json') as json_file:
+            data = json.load(json_file)
+    else:
+        return data
+    users = data['users']
+    users_to_delete = []
+    session_ids_to_delete = []
+    for name in users:
+        now = datetime.datetime.now()
+        ttl = datetime.datetime.strptime(users[name]['ttl'], '%c')
+        if ttl < now:
+            users_to_delete.append(name)
+            session_ids_to_delete.append(users[name]['session_id'])
+            should_rewrite = True
+    for name in users_to_delete:
+        del users[name]
+    for session_id in session_ids_to_delete:
+        del data['session_ids'][session_id]
+
+    if should_rewrite:
+        with open("users.json", 'w') as outfile:
+            json.dump(data, outfile)
+
+    return data
+
 @bp.route('/update-board', methods=(['POST']))
-def index():
+def update_board():
     # require r1, c1, r2, c2, board, turn
     print(request.json)
     req_params = request.json
@@ -43,3 +77,49 @@ def index():
     possible_moves = chess.get_possible_moves(next_board, 0 if turn else 1)
 
     return {"next_board": next_board, "possible_moves": possible_moves}
+
+@bp.route('/create-user', methods=(['POST']))
+def create_user():
+    # give them a session token or something
+    req_params = request.json
+    required_params = ["name"]
+    for param in required_params:
+        if param not in req_params:
+            return Response(response="missing param", status=404)
+    name = req_params["name"]
+    # store a session-id -> name pair
+    session_id = str(uuid.uuid1())
+
+    now = datetime.datetime.now()
+    time_change = datetime.timedelta(minutes=5)
+    new_time = now + time_change
+
+    current_time_plus_five_minutes = new_time.strftime("%c")
+
+    data = { 'users' : {}, 'session_ids' : {} }
+    # get current users
+    data = retrieve_and_delete_old_users()
+    
+    # add this user with new session id and ttl
+    if name in data['users']:
+        return {"result" : "name taken"}
+    
+    data['users'][name] = { "session_id" : session_id, "ttl" : current_time_plus_five_minutes }
+    data['session_ids'][session_id] = {"name" : name, "ttl" : current_time_plus_five_minutes}
+
+    with open('users.json', 'w') as outfile:
+        json.dump(data, outfile)
+
+    return {"result" : "name created", "session_id" : session_id}
+
+@bp.route('/get-players', methods=(['GET']))
+def get_players():
+    users_and_session_ids = retrieve_and_delete_old_users()
+    print(users_and_session_ids)
+    names = users_and_session_ids['users'].keys()
+    return { "players" : list(names) }
+
+@bp.route('/healthcheck', methods=(['GET']))
+def healthcheck():
+    # give them a session token or something
+    return "ok"
