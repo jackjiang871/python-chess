@@ -40,6 +40,10 @@ def retrieve_and_delete_old_users():
 
     return data
 
+@bp.route('/health-check', methods=(['GET']))
+def health_check():
+    return 'page ok'
+
 @bp.route('/update-board', methods=(['POST']))
 def update_board():
     # require r1, c1, r2, c2, board, turn
