@@ -12,6 +12,8 @@ def create_user():
         if param not in req_params:
             return Response(response="missing param", status=404)
     name = req_params["name"]
+    if len(name) == 0:
+        Response(response="invalid name", status=404)
     session_id = database.create_user(lock, name)
 
     return {"result" : "name created", "session_id" : session_id} if session_id else {"result" : "name taken"}
