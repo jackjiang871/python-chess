@@ -1,9 +1,11 @@
 from flask import Flask
 from flask_cors import CORS
+from threading import Lock
 
 from flask import Blueprint
 
 bp = Blueprint('chess_controller', __name__)
+lock = Lock()
 
 import routes.create_user
 import routes.get_players
