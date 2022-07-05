@@ -24,7 +24,7 @@ def make_move():
     session_id = req_params['session_id']
 
     next_board = database.make_move(lock, session_id, (r1, c1, r2, c2))
-    
+    print(next_board)
     if next_board:
-        return {"result": "sucess", "next_board": next_board}
+        return {"result": "success", "next_board": next_board}
     return {"result": "failure"}

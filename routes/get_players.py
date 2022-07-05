@@ -9,6 +9,7 @@ def get_players():
     session_id = req_params.get('session_id')
     print(session_id)
     challengers = []
+    challenged = []
     if session_id:
         name = database.get_name_for_session_id(lock, session_id)
         challenges = database.get_all_challenges(lock)
@@ -16,6 +17,7 @@ def get_players():
         if name in challenges:
             print(challenges[name])
             challengers = challenges[name]['received']
+            challenged = challenges[name]['sent']
     
     players = database.get_all_usernames(lock)
-    return { "players" : players, "challengers" : challengers }
+    return { "players" : players, "challengers" : challengers, "challenged": challenged }

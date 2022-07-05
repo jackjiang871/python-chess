@@ -105,6 +105,16 @@ def get_session_id_for_name(lock, name):
     lock.release()
     return session_id
 
+def get_game_for_session_id(lock, session_id):
+    game = {}
+    lock.acquire()
+    if session_id in data['session_ids']:
+        game_id = data['session_ids'][session_id]['game_id']
+        if game_id in data['games']:
+            game = data['games'][game_id]
+    lock.release()
+    return game
+
 def create_game(lock, white, black):
     lock.acquire()
     game_id = str(uuid.uuid1())
