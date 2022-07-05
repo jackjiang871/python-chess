@@ -13,6 +13,7 @@ import routes.health_check
 import routes.update_board
 import routes.accept_challenge
 import routes.send_challenge
+import routes.make_move
 
 def create_app():
     app = Flask(__name__)

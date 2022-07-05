@@ -97,12 +97,25 @@ def get_name_for_session_id(lock, session_id):
     lock.release()
     return name
 
+def get_session_id_for_name(lock, name):
+    lock.acquire()
+    session_id = None
+    if name in data['users']:
+        session_id = data['users'][name]['session_id']
+    lock.release()
+    return session_id
+
 def create_game(lock, white, black):
     lock.acquire()
     game_id = str(uuid.uuid1())
+    if white not in data['session_ids'] or black not in data['session_ids']:
+        lock.release()
+        return False
     data['games'][game_id] = {"board": copy.deepcopy(chess.board), 'white_session_id': white, 'black_session_id': black, 'currentMove': 0}
+    data['session_ids'][white]['game_id'] = game_id
+    data['session_ids'][black]['game_id'] = game_id
     lock.release()
-    return game_id
+    return True
 
 def make_move(lock, session_id, move):
     lock.acquire()
@@ -114,13 +127,15 @@ def make_move(lock, session_id, move):
     if game_id == 0:
         lock.release()
         return
-    
+    nextBoard = None
     if (session_id == data['games'][game_id]['white_session_id'] and data['games'][game_id]['currentMove'] == 0) or (session_id == data['games'][game_id]['black_session_id'] and data['games'][game_id]['currentMove'] == 1):
         r1, c1, r2, c2 = move
         currentMove = data['games'][game_id]['currentMove']
-        data['games'][game_id]['board'] = chess.get_updated_board_if_is_valid_move(r1, c1, r2, c2, data['games'][game_id]['board'], currentMove)
+        nextBoard = chess.get_updated_board_if_is_valid_move(r1, c1, r2, c2, data['games'][game_id]['board'], currentMove)
+        data['games'][game_id]['board'] = nextBoard
         data['games'][game_id]['currentMove'] = (currentMove + 1) % 2
     lock.release()
+    return nextBoard
 
 def create_user(lock, name):
     delete_old_users(lock)
