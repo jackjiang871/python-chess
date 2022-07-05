@@ -21,9 +21,6 @@ bishop = ['♝','♗']
 king = ['♚','♔','♚m','♔m']
 queen = ['♛','♕']
 
-def get_new_board():
-    return board
-
 def get_black_pieces():
     return black_pieces
 

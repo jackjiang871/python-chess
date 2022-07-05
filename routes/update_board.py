@@ -5,7 +5,6 @@ import chess
 @bp.route('/update-board', methods=(['POST']))
 def update_board():
     # require r1, c1, r2, c2, board, turn
-    print(request.json)
     req_params = request.json
     required_params = ["r1", "c1", "r2", "c2", "board", "turn"]
     for param in required_params:

@@ -11,6 +11,8 @@ import routes.create_user
 import routes.get_players
 import routes.health_check
 import routes.update_board
+import routes.accept_challenge
+import routes.send_challenge
 
 def create_app():
     app = Flask(__name__)
